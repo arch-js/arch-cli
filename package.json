@@ -1,0 +1,35 @@
+{
+  "name": "reflex-cli",
+  "version": "0.0.1",
+  "description": "The command-line interface to the Reflex framework",
+  "main": "index.js",
+  "bin": {
+    "reflex": "index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/redbadger/reflex-cli"
+  },
+  "keywords": [
+    "reflex",
+    "cli",
+    "command",
+    "line",
+    "framework",
+    "react"
+  ],
+  "author": "Red Badger",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/redbadger/reflex-cli/issues"
+  },
+  "homepage": "https://github.com/redbadger/reflex-cli",
+  "dependencies": {
+    "LiveScript": "^1.3.1",
+    "commander": "^2.6.0",
+    "prelude-ls": "^1.1.1"
+  }
+}
