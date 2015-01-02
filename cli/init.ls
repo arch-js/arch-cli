@@ -7,4 +7,4 @@ module.exports = ->
     .action (appname, options) ->
       console.log 'App Name: %s, Author: %s', appname, options.author
     .on '--help', ->
-      console.log 'Some help text here.'
+      console.log 'TODO: This help text'
