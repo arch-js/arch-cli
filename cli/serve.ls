@@ -55,6 +55,8 @@ serve = (opts) ->
       init opts
 
 init = (opts) ->
+  if opts.watch and opts.daemonise
+    return console.error "You can't enable a watcher when running in daemon mode."
   start-server opts
 
   if opts.watch
