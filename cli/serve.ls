@@ -38,7 +38,7 @@ clean-pidfile = (opts, cb) ->
     cb! if cb
 
 get-pidfile = (opts) ->
-  return opts.pidfile or (path.resolve "./server-#{opts.port}.pid")
+  return opts.pidfile or (path.resolve "./server-#{opts.port or 3000}.pid")
 
 serve = (opts) ->
   opts = ({} import default-opts) import opts
