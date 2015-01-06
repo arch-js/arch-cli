@@ -97,6 +97,10 @@ restart-server = (opts) ->
 
 watch-server = (opts) ->
   watch ['lib', 'app'], (file) ->
+    compiler = child_process.exec (path.resolve './node_modules/.bin/gulp')
+    [compiler.stdout, compiler.stderr] |> each ->
+      it.set-encoding 'utf8'
+      it.on 'data' console.log
     switch (file |> split \. |> last)
       | \ls => restart-server opts
       | \js => restart-server opts
