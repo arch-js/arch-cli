@@ -1,41 +1,20 @@
-require! <[
+require! {
   fs
   path
   child_process
-  is-running
-]>
+  'is-running'
+  'node-watch': watch
+}
 
-async-log = ->
-  logfile = fs.open-sync it, 'a'
-  ['ignore', logfile, logfile]
+server = null
 
-start-server = (opts) ->
-  s-opts =
-    env: process.env import do
-      REFLEX_PORT: opts.port or process.env.REFLEX_PORT or undefined
-    detached: opts.daemonise
-    stdio: if opts.daemonise => (if opts.log => async-log opts.log else 'ignore') else 'pipe'
-
-  if opts.standalone
-    server = child_process.spawn 'npm', ['start'], s-opts
-  else
-    # TODO: Expose a programmatic API in the reflex server to allow starting it without child_process
-    server = child_process.spawn (path.resolve './node_modules/.bin/gulp'), ['serve'], s-opts
-
-  if opts.daemonise
-    fs.write-file (opts.pidfile or (path.resolve './tmp/server.pid')), server.pid, (err) ->
-      if err
-        console.error err
-      else
-        server.unref!
-        console.log 'Server started. PID:', server.pid
-  else
-    [server.stdout, server.stderr] |> each ->
-      it.set-encoding 'utf8'
-      it.on 'data' !->
-        console.log it
-        if opts.log
-          fs.append-file opts.log, "#it\n", console.error
+default-opts =
+  daemonise: false
+  log: false
+  pidfile: null
+  port: 3000
+  standalone: false
+  watch: false
 
 module.exports = ->
   it
@@ -46,20 +25,82 @@ module.exports = ->
     .option '-i, --pidfile <pidfile>', 'Specify a pidfile to use.'
     .option '-l, --log <file>', 'Specify a file to log to.'
     .option '-p, --port <port>', 'Specify a server port (sets the REFLEX_PORT environment variable)'
-    .option '-s, --standalone', "Run in standalone mode, without Reflex's gulp-based server task."
+    .option '-s, --standalone', "Run in standalone mode, without Reflex's server.js."
     .option '-w, --watch', 'Watch for changes and restart server on change.'
-    .action (opts) ->
-      pidfile = opts.pidfile or (path.resolve './tmp/server.pid')
-      fs.exists pidfile, (exists) ->
-        if exists
-          pid = fs.read-file-sync pidfile, encoding: 'utf8'
-          if is-running +pid
-            console.log "Server already running (PID: #pid)"
-          else
-            fs.unlink-sync pidfile
-            start-server opts
-        else
-          start-server opts
-
+    .action serve
     .on '--help', ->
       console.log 'TODO: This help text'
+
+clean-pidfile = (opts, cb) ->
+  pidfile = get-pidfile opts
+  fs.unlink pidfile, (err) ->
+    throw err if err
+    cb! if cb
+
+get-pidfile = (opts) ->
+  return opts.pidfile or (path.resolve "./server-#{opts.port or 3000}.pid")
+
+serve = (opts) ->
+  opts = ({} import default-opts) import opts
+  pidfile = get-pidfile opts
+  fs.exists pidfile, (exists) ->
+    if exists
+      fs.read-file pidfile, encoding: 'utf8', (err, pid) ->
+        if is-running +pid
+          console.log "Server already running on port #{opts.port or 3000} (pid #pid)"
+        else
+          clean-pidfile opts, ->
+            init opts
+    else
+      init opts
+
+init = (opts) ->
+  if opts.watch and opts.daemonise
+    return console.error "You can't enable a watcher when running in daemon mode."
+  start-server opts
+
+  if opts.watch
+    watch-server opts
+
+start-server = (opts) ->
+  s-opts =
+    env: process.env import do
+      REFLEX_PORT: opts.port or process.env.REFLEX_PORT or undefined
+    detached: opts.daemonise
+    stdio: if opts.daemonise => (if opts.log => ['ignore', (fs.open-sync opts.log, 'a'), (fs.open-sync opts.log, 'a')] else 'ignore') else 'pipe'
+
+  if opts.standalone
+    server := child_process.spawn 'npm', ['start'], s-opts
+  else
+    server := child_process.spawn 'node', ['server.js'], s-opts
+
+  if opts.daemonise
+    server.unref!
+  else
+    [server.stdout, server.stderr] |> each ->
+      it.set-encoding 'utf8'
+      it.on 'data' !->
+        console.log it
+        if opts.log
+          fs.append-file opts.log, "#it\n", (err) ->
+            console.error err if err
+
+  fs.write-file (get-pidfile opts), server.pid, (err) -> throw err if err
+
+stop-server = (opts) ->
+  server.kill!
+
+restart-server = (opts) ->
+  server.on 'exit', ->
+    start-server opts
+  stop-server opts
+
+watch-server = (opts) ->
+  watch ['app'], (file) ->
+    compiler = child_process.exec (path.resolve './node_modules/.bin/gulp')
+    [compiler.stdout, compiler.stderr] |> each ->
+      it.set-encoding 'utf8'
+      it.on 'data' console.log
+    switch (file |> split \. |> last)
+      | \ls => restart-server opts
+      | \js => restart-server opts
