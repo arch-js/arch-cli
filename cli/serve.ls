@@ -8,6 +8,14 @@ require! {
 
 server = null
 
+default-opts =
+  daemonise: false
+  log: false
+  pidfile: null
+  port: 3000
+  standalone: false
+  watch: false
+
 module.exports = ->
   it
     .command 'serve'
@@ -17,28 +25,38 @@ module.exports = ->
     .option '-i, --pidfile <pidfile>', 'Specify a pidfile to use.'
     .option '-l, --log <file>', 'Specify a file to log to.'
     .option '-p, --port <port>', 'Specify a server port (sets the REFLEX_PORT environment variable)'
-    .option '-s, --standalone', "Run in standalone mode, without Reflex's gulp-based server task."
+    .option '-s, --standalone', "Run in standalone mode, without Reflex's server.js."
     .option '-w, --watch', 'Watch for changes and restart server on change.'
     .action serve
     .on '--help', ->
       console.log 'TODO: This help text'
 
+clean-pidfile = (opts, cb) ->
+  pidfile = get-pidfile opts
+  fs.unlink pidfile, (err) ->
+    throw err if err
+    cb! if cb
+
+get-pidfile = (opts) ->
+  return opts.pidfile or (path.resolve "./server-#{opts.port}.pid")
+
 serve = (opts) ->
-  pidfile = opts.pidfile or (path.resolve './server.pid')
+  opts = ({} import default-opts) import opts
+  pidfile = get-pidfile opts
   fs.exists pidfile, (exists) ->
     if exists
-      pid = fs.read-file-sync pidfile, encoding: 'utf8'
-      if is-running +pid
-        console.log "Server already running (pid #pid)"
-      else
-        fs.unlink pidfile, (err) ->
-          throw err if err
-          init opts
+      fs.read-file pidfile, encoding: 'utf8', (err, pid) ->
+        if is-running +pid
+          console.log "Server already running on port #{opts.port or 3000} (pid #pid)"
+        else
+          clean-pidfile opts, ->
+            init opts
     else
       init opts
 
 init = (opts) ->
   start-server opts
+
   if opts.watch
     watch-server opts
 
@@ -47,21 +65,25 @@ start-server = (opts) ->
     env: process.env import do
       REFLEX_PORT: opts.port or process.env.REFLEX_PORT or undefined
     detached: opts.daemonise
+    stdio: if opts.daemonise => (if opts.log => ['ignore', (fs.open-sync opts.log, 'a'), (fs.open-sync opts.log, 'a')] else 'ignore') else 'pipe'
 
   if opts.standalone
     server := child_process.spawn 'npm', ['start'], s-opts
   else
-    server := child_process.exec 'node server.js', s-opts
+    server := child_process.spawn 'node', ['server.js'], s-opts
 
-  [server.stdout, server.stderr] |> each ->
-    it.set-encoding 'utf8'
-    it.on 'data' !->
-      console.log it
-      if opts.log
-        fs.append-file opts.log, "#it\n", (err) ->
-          console.error err if err
+  if opts.daemonise
+    server.unref!
+  else
+    [server.stdout, server.stderr] |> each ->
+      it.set-encoding 'utf8'
+      it.on 'data' !->
+        console.log it
+        if opts.log
+          fs.append-file opts.log, "#it\n", (err) ->
+            console.error err if err
 
-  fs.write-file (opts.pidfile or (path.resolve './server.pid')), server.pid, (err) -> throw err if err
+  fs.write-file (get-pidfile opts), server.pid, (err) -> throw err if err
 
 stop-server = (opts) ->
   server.kill!
