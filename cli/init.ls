@@ -1,6 +1,5 @@
 require! {
-  'yeoman-generator': yo
-  'generator-reflex'
+  'yeoman-environment': yo
 }
 
 module.exports = ->
