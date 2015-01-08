@@ -4,6 +4,7 @@ require! {
   child_process
   'is-running'
   'node-watch': watch
+  reflex
 }
 
 server = null
@@ -72,7 +73,7 @@ start-server = (opts) ->
   if opts.standalone
     server := child_process.spawn 'npm', ['start'], s-opts
   else
-    server := child_process.spawn 'node', ['server.js'], s-opts
+    server := child_process.spawn 'node', [reflex.server-binary], s-opts
 
   if opts.daemonise
     server.unref!
