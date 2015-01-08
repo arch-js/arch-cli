@@ -32,6 +32,7 @@
     "commander": "^2.6.0",
     "is-running": "^1.0.5",
     "node-watch": "^0.3.4",
-    "prelude-ls": "^1.1.1"
+    "prelude-ls": "^1.1.1",
+    "yeoman-generator": "^0.18.6"
   }
 }
