@@ -7,6 +7,10 @@ require! {
   reflex
 }
 
+reflex-path = path.dirname require.resolve 'reflex'
+reflex-pkg = require path.join reflex-path, 'package.json'
+reflex-server-binary = path.join reflex-path, reflex-pkg.bin['reflex-server']
+
 server = null
 
 default-opts =
@@ -73,7 +77,7 @@ start-server = (opts) ->
   if opts.standalone
     server := child_process.spawn 'npm', ['start'], s-opts
   else
-    server := child_process.spawn 'node', [reflex.server-binary], s-opts
+    server := child_process.spawn 'node', [reflex-server-binary], s-opts
 
   if opts.daemonise
     server.unref!
