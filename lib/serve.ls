@@ -5,6 +5,7 @@ require! {
   'is-running'
   'node-watch': watch
   reflex
+  './build.ls'
 }
 
 reflex-path = path.dirname require.resolve 'reflex'
@@ -30,8 +31,6 @@ clean-pidfile = (opts, cb) ->
 
 get-pidfile = (opts) ->
   return opts.pidfile or (path.resolve "./server-#{opts.port or 3000}.pid")
-
-
 
 init = (opts) ->
   if opts.watch and opts.daemonise
@@ -76,10 +75,7 @@ restart-server = (opts) ->
 
 watch-server = (opts) ->
   watch ['app'], (file) ->
-    compiler = child_process.exec (path.resolve './node_modules/.bin/gulp')
-    [compiler.stdout, compiler.stderr] |> each ->
-      it.set-encoding 'utf8'
-      it.on 'data' console.log
+    build!
     switch (file |> split \. |> last)
       | \ls => restart-server opts
       | \js => restart-server opts
