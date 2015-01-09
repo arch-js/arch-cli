@@ -1,16 +1,11 @@
-require! {
-  'yeoman-environment': yo
-}
+require! '../lib/init.ls'
 
 module.exports = ->
   it
-    .command 'init [appname]'
-    .description 'Initialise a Reflex application in the current working directory.'
+    .command 'init [name...]'
+    .description 'Initialise a Reflex application.'
     .alias 'i'
-    .option '-a, --author <author>'
-    .action (appname, opts) ->
-      env = yo.create-env!
-      env.register 'generator-reflex'
-      env.run 'reflex'
+    .option '-d, --dir <directory>', 'Directory to generate the app in - defaults to app-name or current directory.'
+    .action init
     .on '--help', ->
       console.log 'TODO: This help text'
