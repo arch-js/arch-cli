@@ -58,7 +58,7 @@ start-server = (opts) ->
     [server.stdout, server.stderr] |> each ->
       it.set-encoding 'utf8'
       it.on 'data' !->
-        console.log it
+        console.log it.trim!
         if opts.log
           fs.append-file opts.log, "#it\n", (err) ->
             console.error err if err
