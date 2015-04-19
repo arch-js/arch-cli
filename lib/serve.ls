@@ -4,11 +4,10 @@ require! {
   child_process
   'is-running'
   'node-watch': watch
-  reflex
   './build.ls'
 }
 
-reflex-path = path.dirname require.resolve 'reflex/package.json'
+reflex-path = path.dirname path.resolve './node_modules/reflex/package.json'
 reflex-pkg = require path.join reflex-path, 'package.json'
 reflex-server-binary = path.join reflex-path, reflex-pkg.bin['reflex-server']
 
