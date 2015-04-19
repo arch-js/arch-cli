@@ -34,7 +34,6 @@
     "generator-reflex": "http://github.com/redbadger/generator-reflex/tarball/master",
     "node-watch": "^0.3.4",
     "prelude-ls": "^1.1.1",
-    "reflex": "http://github.com/redbadger/reflex/tarball/master",
     "yeoman-environment": "^1.1.1"
   }
 }
