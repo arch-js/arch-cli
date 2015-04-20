@@ -7,9 +7,6 @@ require! {
   './build.ls'
 }
 
-reflex-path = path.dirname path.resolve './node_modules/reflex/package.json'
-reflex-pkg = require path.join reflex-path, 'package.json'
-reflex-server-binary = path.join reflex-path, reflex-pkg.bin['reflex-server']
 
 server = null
 
@@ -40,6 +37,10 @@ init = (opts) ->
     watch-server opts
 
 start-server = (opts) ->
+  reflex-path = path.dirname path.resolve './node_modules/reflex/package.json'
+  reflex-pkg = require path.join reflex-path, 'package.json'
+  reflex-server-binary = path.join reflex-path, reflex-pkg.bin['reflex-server']
+
   s-opts =
     env: process.env import do
       REFLEX_PORT: opts.port or process.env.REFLEX_PORT or undefined
