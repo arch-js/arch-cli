@@ -1,20 +1,20 @@
 {
-  "name": "reflex-cli",
+  "name": "arch-cli",
   "version": "0.1.0-rc.1",
-  "description": "The command-line interface to the Reflex framework",
+  "description": "The command-line interface to the Arch framework",
   "main": "index.js",
   "bin": {
-    "reflex": "index.js"
+    "arch": "index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/redbadger/reflex-cli"
+    "url": "https://github.com/redbadger/arch-cli"
   },
   "keywords": [
-    "reflex",
+    "arch",
     "cli",
     "command",
     "line",
@@ -24,14 +24,14 @@
   "author": "Red Badger",
   "license": "",
   "bugs": {
-    "url": "https://github.com/redbadger/reflex-cli/issues"
+    "url": "https://github.com/redbadger/arch-cli/issues"
   },
-  "homepage": "https://github.com/redbadger/reflex-cli",
+  "homepage": "https://github.com/redbadger/arch-cli",
   "dependencies": {
     "LiveScript": "^1.3.1",
     "commander": "^2.6.0",
     "is-running": "^1.0.5",
-    "generator-reflex": "http://github.com/redbadger/generator-reflex/tarball/master",
+    "generator-arch": "http://github.com/redbadger/generator-arch/tarball/master",
     "node-watch": "^0.3.4",
     "prelude-ls": "^1.1.1",
     "yeoman-environment": "^1.1.1"

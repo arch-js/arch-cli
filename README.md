@@ -1,4 +1,4 @@
-reflex-cli
+arch-cli
 ==========
 
-Command line tool for the Reflex framework
+Command line tool for the Arch framework

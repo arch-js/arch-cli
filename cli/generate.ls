@@ -3,7 +3,7 @@ require! '../lib/generate.ls'
 module.exports = ->
   it
     .command 'generate <type> [args...]'
-    .description 'Generate something in an existing Reflex app.'
+    .description 'Generate something in an existing Arch app.'
     .alias 'g'
     .action generate
     .on '--help', ->

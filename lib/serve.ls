@@ -37,20 +37,20 @@ init = (opts) ->
     watch-server opts
 
 start-server = (opts) ->
-  reflex-path = path.dirname path.resolve './node_modules/reflex/package.json'
-  reflex-pkg = require path.join reflex-path, 'package.json'
-  reflex-server-binary = path.join reflex-path, reflex-pkg.bin['reflex-server']
+  arch-path = path.dirname path.resolve './node_modules/arch/package.json'
+  arch-pkg = require path.join arch-path, 'package.json'
+  arch-server-binary = path.join arch-path, arch-pkg.bin['arch-server']
 
   s-opts =
     env: process.env import do
-      REFLEX_PORT: opts.port or process.env.REFLEX_PORT or undefined
+      ARCH_PORT: opts.port or process.env.ARCH_PORT or undefined
     detached: opts.daemonise
     stdio: if opts.daemonise => (if opts.log => ['ignore', (fs.open-sync opts.log, 'a'), (fs.open-sync opts.log, 'a')] else 'ignore') else 'pipe'
 
   if opts.standalone
     server := child_process.spawn 'npm', ['start'], s-opts
   else
-    server := child_process.spawn 'node', [reflex-server-binary], s-opts
+    server := child_process.spawn 'node', [arch-server-binary], s-opts
 
   if opts.daemonise
     server.unref!

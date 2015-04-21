@@ -6,7 +6,7 @@ require! {
 
 module.exports = init = (name, opts) ->
   env = yo.create-env!
-  env.register 'generator-reflex'
-  env.run 'reflex', do
+  env.register 'generator-arch'
+  env.run 'arch', do
     dir: opts.dir
     name: (name |> join ' ')
