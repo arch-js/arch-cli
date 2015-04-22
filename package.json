@@ -4,7 +4,7 @@
   "description": "The command-line interface to the Arch framework",
   "main": "index.js",
   "bin": {
-    "arch": "index.js"
+    "arch-cli": "index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
