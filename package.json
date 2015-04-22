@@ -1,6 +1,6 @@
 {
   "name": "arch-cli",
-  "version": "0.1.0-rc.1",
+  "version": "0.1.0-rc.3",
   "description": "The command-line interface to the Arch framework",
   "main": "index.js",
   "bin": {
