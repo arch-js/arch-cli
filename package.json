@@ -28,12 +28,13 @@
   },
   "homepage": "https://github.com/redbadger/arch-cli",
   "dependencies": {
-    "LiveScript": "^1.3.1",
-    "commander": "^2.6.0",
+    "commander": "^2.8.1",
+    "generator-arch": "arch-js/generator-arch",
     "is-running": "^1.0.5",
-    "generator-arch": "http://github.com/redbadger/generator-arch/tarball/master",
+    "livescript": "^1.4.0",
     "node-watch": "^0.3.4",
-    "prelude-ls": "^1.1.1",
-    "yeoman-environment": "^1.1.1"
+    "prelude-ls": "^1.1.2",
+    "yeoman-environment": "^1.2.5",
+    "yo": "^1.4.7"
   }
 }
