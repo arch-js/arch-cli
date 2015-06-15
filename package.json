@@ -32,7 +32,6 @@
     "generator-arch": "arch-js/generator-arch",
     "is-running": "^1.0.5",
     "livescript": "^1.4.0",
-    "node-watch": "^0.3.4",
     "prelude-ls": "^1.1.2",
     "yeoman-environment": "^1.2.5",
     "yo": "^1.4.7"
